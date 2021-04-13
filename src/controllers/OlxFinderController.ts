@@ -14,9 +14,7 @@ class OlxFinderController {
         tipo,
       },
     });
-    // await Sweeping(pesquisaCriada);
-
-    return res.json(pesquisaCriada);
+    await Sweeping(pesquisaCriada).then(urls => {});
 
     await prisma.$disconnect();
   }
