@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Pesquisa {
+  id String @default(uuid()) @id
+  url String?
+  cidade String?
+  tipo String?
+  createdAt DateTime @default(now())
+}
+
+model ImoveisOlx {
+  id String @default(uuid()) @id
+  titulo String
+  cidadeBairro String
+  preco String
+  link String
+
+  dataPublicacao String?
+  codPublicacao String?
+  cep String?
+  categoria String?
+  tipo String?
+  quartos String?
+  banheiros String?
+  vagasGaragem String?
+  areaConstruida String?
+  detalhesImovel String?
+  tetalhesCondominio String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive Boolean @default(true)
+
+  // Relacionamento com tabela de anunciantes
+  infoAnuncianteOlx AnuncianteOlx @relation(fields: [anuncianteId], references: [id])
+  anuncianteId String
+}
+
+model AnuncianteOlx {
+  id        String      @default(uuid()) @id
+  nome String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  imoveisOlx ImoveisOlx[]
+}
+
