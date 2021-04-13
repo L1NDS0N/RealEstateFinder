@@ -10,47 +10,59 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Links {
+  id           String      @id @default(uuid())
+  href String?
+  // Um link terá uma pesquisa como chave estrangeira
+  pesquisa     Pesquisa?   @relation(fields: [pesquisaId], references: [id])
+  pesquisaId   String?
+}
+
 model Pesquisa {
-  id String @default(uuid()) @id
-  url String?
+  id     String  @id @default(uuid())
+  url    String?
   cidade String?
-  tipo String?
+  tipo   String?
   createdAt DateTime @default(now())
+
+  // Uma pesquisa conterá um array de links como retorno da pesquisa
+  Links     Links[]
 }
 
 model ImoveisOlx {
-  id String @default(uuid()) @id
-  titulo String
+  id           String @id @default(uuid())
+  titulo       String
   cidadeBairro String
-  preco String
-  link String
+  preco        String
+  link         String
 
-  dataPublicacao String?
-  codPublicacao String?
-  cep String?
-  categoria String?
-  tipo String?
-  quartos String?
-  banheiros String?
-  vagasGaragem String?
-  areaConstruida String?
-  detalhesImovel String?
+  dataPublicacao     String?
+  codPublicacao      String?
+  cep                String?
+  categoria          String?
+  tipo               String?
+  quartos            String?
+  banheiros          String?
+  vagasGaragem       String?
+  areaConstruida     String?
+  detalhesImovel     String?
   tetalhesCondominio String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isActive Boolean @default(true)
+  isActive  Boolean  @default(true)
 
   // Relacionamento com tabela de anunciantes
   infoAnuncianteOlx AnuncianteOlx @relation(fields: [anuncianteId], references: [id])
-  anuncianteId String
+  anuncianteId      String
+  // Relacionamento com a tabela de Links, os imoveis precisarão criar um relacionamento com os links aos quais seus dados são provenientes
+
 }
 
 model AnuncianteOlx {
-  id        String      @default(uuid()) @id
-  nome String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String       @id @default(uuid())
+  nome       String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
   imoveisOlx ImoveisOlx[]
 }
-

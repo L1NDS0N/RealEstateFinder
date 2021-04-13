@@ -15,7 +15,6 @@ async function Sweeping(pesquisa: Pesquisa) {
   const link_urls = await page.evaluate((...links) => {
     return links.map(e => e.href);
   }, ...links);
-  console.log(link_urls);
 
   await browser.close();
   return link_urls;
