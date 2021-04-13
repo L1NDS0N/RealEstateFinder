@@ -15,19 +15,25 @@ class OlxFinderController {
       },
     });
 
-    await Sweeping(pesquisaCriada).then(hrefs => {
-      hrefs.map(href => {
-        console.log('this is the href updatind now:', href);
-        prisma.pesquisa.update({
-          where: { id: pesquisaCriada.id },
-          data: {
-            Links: {
-              create: { href: href },
-            },
-          },
-        });
+    await Sweeping(pesquisaCriada)
+      .then(hrefs => {
+          hrefs.map(async href => {
+            await prisma.pesquisa.update({
+              where: { id: pesquisaCriada.id },
+              data: {
+                Links: {
+                  create: { href },
+                },
+              },
+            }).catch(e => {
+              console.log(e);
+            });
+          });
+        })
+      .catch(e => {
+        console.log(e);
       });
-    });
+
     await prisma.$disconnect();
     return res.json(pesquisaCriada);
   }
