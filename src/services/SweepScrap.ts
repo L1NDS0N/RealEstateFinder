@@ -5,7 +5,7 @@ import puppeteer from 'puppeteer';
 // important: lib: "dom"
 async function Sweeping(pesquisa: Pesquisa) {
   const xpath_expression = '//*[@id="ad-list"]/li/a[@href]';
-  const browser = await puppeteer.launch({ headless: false, slowMo: 50 });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.setViewport({ width: 1366, height: 768 });
 
@@ -15,7 +15,7 @@ async function Sweeping(pesquisa: Pesquisa) {
   const link_urls = await page.evaluate((...links) => {
     return links.map(e => e.href);
   }, ...links);
-
+  console.warn('🔠 data sucessful pulled right now ');
   await browser.close();
   return link_urls;
 }
