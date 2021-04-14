@@ -11,6 +11,7 @@ const prisma = new PrismaClient();
 class OlxFinderController {
   async NovaPesquisa(req: Request, res: Response) {
     const { url, cidade, tipo } = req.body;
+
     const schema = yup.object().shape({
       url: yup.string().url().required(),
       cidade: yup.string().notRequired(),
@@ -22,8 +23,6 @@ class OlxFinderController {
     } catch (err) {
       throw new AppError(err);
     }
-
-    res.status(400).json({ error: 'URL cannot be null' });
 
     const pesquisaCriada = await prisma.pesquisa.create({
       data: {
@@ -56,6 +55,17 @@ class OlxFinderController {
 
     await prisma.$disconnect();
     return res.json(pesquisaCriada);
+  }
+
+  async Raspar(req: Request, res: Response) {
+    const { id } = req.body;
+
+    const links = await prisma.links.findMany({
+      where: { pesquisaId: id },
+      select: { id: true, href: true, pesquisaId: false },
+    });
+
+    return res.json(links);
   }
 }
 
