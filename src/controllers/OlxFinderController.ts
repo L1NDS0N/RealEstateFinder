@@ -1,13 +1,15 @@
+import { Links } from '.prisma/client';
 import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
-import { Sweeping } from '../services/SweepScrap';
 import * as yup from 'yup';
 import { pt } from 'yup-locale-pt';
 import { AppError } from '../errors/AppError';
+import { ScrapPage, Sweeping } from '../services/SweepScrap';
 
 yup.setLocale(pt);
 
 const prisma = new PrismaClient();
+
 class OlxFinderController {
   async NovaPesquisa(req: Request, res: Response) {
     const { url, cidade, tipo } = req.body;
@@ -45,12 +47,12 @@ class OlxFinderController {
               },
             })
             .catch(e => {
-              console.log(e);
+              console.warn(e);
             });
         });
       })
       .catch(e => {
-        console.log(e);
+        console.warn(e);
       });
 
     await prisma.$disconnect();
@@ -60,12 +62,20 @@ class OlxFinderController {
   async Raspar(req: Request, res: Response) {
     const { id } = req.body;
 
-    const links = await prisma.links.findMany({
+    const listaLinks = await prisma.links.findMany({
       where: { pesquisaId: id },
-      select: { id: true, href: true, pesquisaId: false },
+      // select: { id: true, href: true, pesquisaId: false },
     });
 
-    return res.json(links);
+    await ScrapPage(listaLinks)
+      .then()
+      .catch(e => {
+        throw new AppError(e);
+      });
+
+    return res.json(
+      'Busca sendo processada internamente, os dados serão atualizados em breve',
+    );
   }
 }
 
